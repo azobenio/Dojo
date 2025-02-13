@@ -1,0 +1,11 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/gitIntegration/platformProperties/2.0.0/schema.json",
+  "metadata": {
+    "type": "DataPipeline",
+    "displayName": "DP008_ComplexStructures"
+  },
+  "config": {
+    "version": "2.0",
+    "logicalId": "a1693a05-bad7-a22d-4f61-7b2b63fa9f0c"
+  }
+}

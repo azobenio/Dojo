@@ -1,0 +1,146 @@
+{
+  "properties": {
+    "activities": [
+      {
+        "name": "Wait 8 secondds",
+        "type": "Wait",
+        "state": "Inactive",
+        "onInactiveMarkAs": "Succeeded",
+        "dependsOn": [],
+        "typeProperties": {
+          "waitTimeInSeconds": {
+            "value": "@pipeline().parameters.WaitTImeSettings.Configuration.WaitTimes[2]",
+            "type": "Expression"
+          }
+        }
+      },
+      {
+        "name": "Ex1_3 ForEach item in array",
+        "type": "ForEach",
+        "state": "Inactive",
+        "onInactiveMarkAs": "Succeeded",
+        "dependsOn": [],
+        "typeProperties": {
+          "items": {
+            "value": "@pipeline().parameters.WaitTImeSettings.Configuration.WaitTimes",
+            "type": "Expression"
+          },
+          "activities": [
+            {
+              "name": "Wait1",
+              "type": "Wait",
+              "dependsOn": [],
+              "typeProperties": {
+                "waitTimeInSeconds": {
+                  "value": "@item()",
+                  "type": "Expression"
+                }
+              }
+            }
+          ]
+        }
+      },
+      {
+        "name": "ForEach item in array_copy1",
+        "type": "ForEach",
+        "state": "Inactive",
+        "onInactiveMarkAs": "Succeeded",
+        "dependsOn": [],
+        "typeProperties": {
+          "items": {
+            "value": "@pipeline().parameters.WaitTImeSettings.Configuration.WaitTimes",
+            "type": "Expression"
+          },
+          "activities": [
+            {
+              "name": "If Condition1",
+              "type": "IfCondition",
+              "dependsOn": [],
+              "typeProperties": {
+                "expression": {
+                  "value": "@greater(item(), 4)",
+                  "type": "Expression"
+                },
+                "ifFalseActivities": [],
+                "ifTrueActivities": [
+                  {
+                    "name": "Wait1_copy1",
+                    "type": "Wait",
+                    "dependsOn": [],
+                    "typeProperties": {
+                      "waitTimeInSeconds": {
+                        "value": "@item()",
+                        "type": "Expression"
+                      }
+                    }
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      },
+      {
+        "name": "Filter Array",
+        "type": "Filter",
+        "dependsOn": [],
+        "typeProperties": {
+          "items": {
+            "value": "@pipeline().parameters.WaitTImeSettings.Configuration.WaitTimes",
+            "type": "Expression"
+          },
+          "condition": {
+            "value": "@less(item(),4 )",
+            "type": "Expression"
+          }
+        }
+      },
+      {
+        "name": "ForEach item in Filtered Array",
+        "type": "ForEach",
+        "dependsOn": [
+          {
+            "activity": "Filter Array",
+            "dependencyConditions": [
+              "Succeeded"
+            ]
+          }
+        ],
+        "typeProperties": {
+          "items": {
+            "value": "@activity('Filter Array').output.Value",
+            "type": "Expression"
+          },
+          "activities": [
+            {
+              "name": "Wait n seconds",
+              "type": "Wait",
+              "dependsOn": [],
+              "typeProperties": {
+                "waitTimeInSeconds": {
+                  "value": "@item()",
+                  "type": "Expression"
+                }
+              }
+            }
+          ]
+        }
+      }
+    ],
+    "parameters": {
+      "WaitTImeSettings": {
+        "type": "object",
+        "defaultValue": {
+          "Configuration": {
+            "WaitTimes": [
+              5,
+              1,
+              8,
+              3
+            ]
+          }
+        }
+      }
+    }
+  }
+}

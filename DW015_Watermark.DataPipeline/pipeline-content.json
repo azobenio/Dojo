@@ -1,0 +1,132 @@
+{
+  "properties": {
+    "activities": [
+      {
+        "name": "SetPipelineStartDatetime",
+        "type": "SetVariable",
+        "dependsOn": [],
+        "policy": {
+          "secureOutput": false,
+          "secureInput": false
+        },
+        "typeProperties": {
+          "variableName": "PipelineStartDatetime",
+          "value": {
+            "value": "@utcNow()",
+            "type": "Expression"
+          }
+        }
+      },
+      {
+        "name": "Call Get WatermarkSP",
+        "type": "Lookup",
+        "dependsOn": [
+          {
+            "activity": "SetPipelineStartDatetime",
+            "dependencyConditions": [
+              "Succeeded"
+            ]
+          }
+        ],
+        "policy": {
+          "timeout": "0.12:00:00",
+          "retry": 0,
+          "retryIntervalInSeconds": 30,
+          "secureOutput": false,
+          "secureInput": false
+        },
+        "typeProperties": {
+          "source": {
+            "type": "DataWarehouseSource",
+            "sqlReaderStoredProcedureName": "[metadata].[p_get_watermark_value]",
+            "storedProcedureParameters": {
+              "PipelineID": {
+                "type": "String",
+                "value": {
+                  "value": "@pipeline().Pipeline",
+                  "type": "Expression"
+                }
+              }
+            },
+            "queryTimeout": "02:00:00",
+            "partitionOption": "None"
+          },
+          "datasetSettings": {
+            "annotations": [],
+            "linkedService": {
+              "name": "DW001_DWH",
+              "properties": {
+                "annotations": [],
+                "type": "DataWarehouse",
+                "typeProperties": {
+                  "endpoint": "bmlm4xgixyretm76q44b2o7som-y3jdgb23r63efk62odmzsc6hse.datawarehouse.fabric.microsoft.com",
+                  "artifactId": "de1b618d-5cde-4a19-b749-de7d4fd006bc",
+                  "workspaceId": "0733d2c6-8f5b-42b6-abda-70d9990bc791"
+                }
+              }
+            },
+            "type": "DataWarehouseTable",
+            "schema": [],
+            "typeProperties": {}
+          }
+        }
+      },
+      {
+        "name": "SET Watermark Value",
+        "type": "SqlServerStoredProcedure",
+        "dependsOn": [
+          {
+            "activity": "Call Get WatermarkSP",
+            "dependencyConditions": [
+              "Succeeded"
+            ]
+          }
+        ],
+        "policy": {
+          "timeout": "0.12:00:00",
+          "retry": 0,
+          "retryIntervalInSeconds": 30,
+          "secureOutput": false,
+          "secureInput": false
+        },
+        "typeProperties": {
+          "storedProcedureName": "[metadata].[p_set_watermark_value]",
+          "storedProcedureParameters": {
+            "PipelineID": {
+              "value": {
+                "value": "@pipeline().Pipeline",
+                "type": "Expression"
+              },
+              "type": "String"
+            },
+            "WatermarkValue": {
+              "value": {
+                "value": "@variables('PipelineStartDatetime')",
+                "type": "Expression"
+              },
+              "type": "Datetime"
+            }
+          }
+        },
+        "linkedService": {
+          "name": "DW001_DWH",
+          "objectId": "de1b618d-5cde-4a19-b749-de7d4fd006bc",
+          "properties": {
+            "annotations": [],
+            "type": "DataWarehouse",
+            "typeProperties": {
+              "endpoint": "bmlm4xgixyretm76q44b2o7som-y3jdgb23r63efk62odmzsc6hse.datawarehouse.fabric.microsoft.com",
+              "artifactId": "de1b618d-5cde-4a19-b749-de7d4fd006bc",
+              "workspaceId": "0733d2c6-8f5b-42b6-abda-70d9990bc791"
+            }
+          }
+        }
+      }
+    ],
+    "variables": {
+      "PipelineStartDatetime": {
+        "type": "String"
+      }
+    }
+  }
+}

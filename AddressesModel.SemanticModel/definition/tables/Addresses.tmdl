@@ -1,0 +1,93 @@
+table Addresses
+	lineageTag: c717cc40-e7eb-427c-8d77-1269c1c6065e
+	sourceLineageTag: [dbo].[Addresses]
+
+	column id
+		dataType: string
+		sourceProviderType: varchar(16)
+		lineageTag: 34461c16-1f13-4386-98fe-f53df5423035
+		sourceLineageTag: id
+		summarizeBy: none
+		sourceColumn: id
+
+		annotation SummarizationSetBy = Automatic
+
+	column location_id
+		dataType: string
+		sourceProviderType: varchar(10)
+		lineageTag: bc08fc5f-dfd7-4227-942b-359e1c308abc
+		sourceLineageTag: location_id
+		summarizeBy: none
+		sourceColumn: location_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column address_1
+		dataType: string
+		sourceProviderType: varchar(100)
+		lineageTag: 5b4b1b1e-69e1-4902-b0ff-4edd1f30adf7
+		sourceLineageTag: address_1
+		summarizeBy: none
+		sourceColumn: address_1
+
+		annotation SummarizationSetBy = Automatic
+
+	column address_2
+		dataType: string
+		sourceProviderType: varchar(100)
+		lineageTag: 6022bec2-bfe8-487b-a950-302b8ba4a0a3
+		sourceLineageTag: address_2
+		summarizeBy: none
+		sourceColumn: address_2
+
+		annotation SummarizationSetBy = Automatic
+
+	column city
+		dataType: string
+		sourceProviderType: varchar(100)
+		lineageTag: 4e152ab0-07a7-4791-aed1-6975d91a29db
+		sourceLineageTag: city
+		summarizeBy: none
+		sourceColumn: city
+
+		annotation SummarizationSetBy = Automatic
+
+	column state_province
+		dataType: string
+		sourceProviderType: varchar(100)
+		lineageTag: 8cfd5b4f-b4e6-4c39-a808-9269e339fd2b
+		sourceLineageTag: state_province
+		summarizeBy: none
+		sourceColumn: state_province
+
+		annotation SummarizationSetBy = Automatic
+
+	column postal_code
+		dataType: string
+		sourceProviderType: varchar(10)
+		lineageTag: d33152f4-9adb-4a68-9619-1f8f9e986180
+		sourceLineageTag: postal_code
+		summarizeBy: none
+		sourceColumn: postal_code
+
+		annotation SummarizationSetBy = Automatic
+
+	column country
+		dataType: string
+		sourceProviderType: varchar(100)
+		lineageTag: 9736cecd-471b-423a-87ea-5051c48fa228
+		sourceLineageTag: country
+		summarizeBy: none
+		sourceColumn: country
+
+		annotation SummarizationSetBy = Automatic
+
+	partition Addresses = entity
+		mode: directLake
+		source
+			entityName: Addresses
+			schemaName: dbo
+			expressionSource: DatabaseQuery
+
+	annotation PBI_ResultType = Table
+

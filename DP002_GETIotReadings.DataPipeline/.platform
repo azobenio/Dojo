@@ -1,0 +1,11 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/gitIntegration/platformProperties/2.0.0/schema.json",
+  "metadata": {
+    "type": "DataPipeline",
+    "displayName": "DP002_GETIotReadings"
+  },
+  "config": {
+    "version": "2.0",
+    "logicalId": "29ddf9fb-b72b-9b6b-47b0-f8f3b7a53623"
+  }
+}

@@ -1,0 +1,166 @@
+{
+  "properties": {
+    "activities": [
+      {
+        "name": "Wait n seconds",
+        "type": "Wait",
+        "state": "Inactive",
+        "onInactiveMarkAs": "Succeeded",
+        "dependsOn": [],
+        "typeProperties": {
+          "waitTimeInSeconds": {
+            "value": "@pipeline().parameters.WaitTimesFinal[2].data.WaitValue",
+            "type": "Expression"
+          }
+        }
+      },
+      {
+        "name": "Foreach item in array",
+        "type": "ForEach",
+        "state": "Inactive",
+        "onInactiveMarkAs": "Succeeded",
+        "dependsOn": [],
+        "typeProperties": {
+          "items": {
+            "value": "@pipeline().parameters.WaitTimesFinal",
+            "type": "Expression"
+          },
+          "activities": [
+            {
+              "name": "Wait n second",
+              "type": "Wait",
+              "dependsOn": [],
+              "typeProperties": {
+                "waitTimeInSeconds": {
+                  "value": "@item().data.WaitValue",
+                  "type": "Expression"
+                }
+              }
+            }
+          ]
+        }
+      },
+      {
+        "name": "Foreach item in array_conditional",
+        "type": "ForEach",
+        "state": "Inactive",
+        "onInactiveMarkAs": "Succeeded",
+        "dependsOn": [],
+        "typeProperties": {
+          "items": {
+            "value": "@pipeline().parameters.WaitTimesFinal",
+            "type": "Expression"
+          },
+          "activities": [
+            {
+              "name": "If Condition1",
+              "type": "IfCondition",
+              "dependsOn": [],
+              "typeProperties": {
+                "expression": {
+                  "value": "@greater(item().data.   WaitValue,4)",
+                  "type": "Expression"
+                },
+                "ifFalseActivities": [],
+                "ifTrueActivities": [
+                  {
+                    "name": "Wait n second_copy1",
+                    "type": "Wait",
+                    "dependsOn": [],
+                    "typeProperties": {
+                      "waitTimeInSeconds": {
+                        "value": "@item().data.WaitValue",
+                        "type": "Expression"
+                      }
+                    }
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      },
+      {
+        "name": "Filter less than 4",
+        "type": "Filter",
+        "dependsOn": [],
+        "typeProperties": {
+          "items": {
+            "value": "@pipeline().parameters.WaitTimesFinal",
+            "type": "Expression"
+          },
+          "condition": {
+            "value": "@less(item().data.WaitValue,4)\r\n",
+            "type": "Expression"
+          }
+        }
+      },
+      {
+        "name": "ForEach item in Filtered Array",
+        "type": "ForEach",
+        "dependsOn": [
+          {
+            "activity": "Filter less than 4",
+            "dependencyConditions": [
+              "Succeeded"
+            ]
+          }
+        ],
+        "typeProperties": {
+          "items": {
+            "value": "@activity('Filter less than 4').output.Value",
+            "type": "Expression"
+          },
+          "activities": [
+            {
+              "name": "Wait n seconds filtered",
+              "type": "Wait",
+              "dependsOn": [],
+              "typeProperties": {
+                "waitTimeInSeconds": {
+                  "value": "@item().data.WaitValue",
+                  "type": "Expression"
+                }
+              }
+            }
+          ]
+        }
+      }
+    ],
+    "parameters": {
+      "WaitTimesFinal": {
+        "type": "array",
+        "defaultValue": [
+          {
+            "Config_ID": 1,
+            "data": {
+              "WaitId": "W100",
+              "WaitValue": 5
+            }
+          },
+          {
+            "Config_ID": 2,
+            "data": {
+              "WaitId": "W200",
+              "WaitValue": 1
+            }
+          },
+          {
+            "Config_ID": 3,
+            "data": {
+              "WaitId": "W300",
+              "WaitValue": 8
+            }
+          },
+          {
+            "Config_ID": 4,
+            "data": {
+              "WaitId": "W400",
+              "WaitValue": 3
+            }
+          }
+        ]
+      }
+    }
+  }
+}

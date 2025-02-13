@@ -1,0 +1,81 @@
+{
+  "properties": {
+    "activities": [
+      {
+        "type": "SetVariable",
+        "typeProperties": {
+          "variableName": "V_STARTT",
+          "value": 100
+        },
+        "policy": {
+          "secureInput": false,
+          "secureOutput": false
+        },
+        "name": "Set Starting Value",
+        "dependsOn": []
+      },
+      {
+        "type": "ExecutePipeline",
+        "typeProperties": {
+          "pipeline": {
+            "referenceName": "a5c06529-016c-b4fd-4060-4a6964389751",
+            "type": "PipelineReference"
+          },
+          "parameters": {
+            "FromParent": {
+              "value": "@variables('V_STARTT')",
+              "type": "Expression"
+            }
+          },
+          "waitOnCompletion": true
+        },
+        "policy": {
+          "secureInput": false
+        },
+        "name": "Invoke pipeline1",
+        "dependsOn": [
+          {
+            "activity": "Set Starting Value",
+            "dependencyConditions": [
+              "Succeeded"
+            ]
+          }
+        ]
+      },
+      {
+        "type": "SetVariable",
+        "typeProperties": {
+          "variableName": "v_END",
+          "value": {
+            "value": "@activity('Invoke pipeline1').output.pipelineReturnValue.BackToParent",
+            "type": "Expression"
+          }
+        },
+        "policy": {
+          "secureInput": false,
+          "secureOutput": false
+        },
+        "name": "Set v_END",
+        "dependsOn": [
+          {
+            "activity": "Invoke pipeline1",
+            "dependencyConditions": [
+              "Succeeded"
+            ]
+          }
+        ]
+      }
+    ],
+    "variables": {
+      "V_START": {
+        "type": "String"
+      },
+      "V_STARTT": {
+        "type": "Integer"
+      },
+      "v_END": {
+        "type": "Integer"
+      }
+    }
+  }
+}

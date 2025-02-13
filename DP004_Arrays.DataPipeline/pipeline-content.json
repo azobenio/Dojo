@@ -1,0 +1,171 @@
+{
+  "properties": {
+    "activities": [
+      {
+        "name": "Task 1 wait 8 Seconds",
+        "type": "Wait",
+        "state": "Inactive",
+        "onInactiveMarkAs": "Succeeded",
+        "dependsOn": [],
+        "typeProperties": {
+          "waitTimeInSeconds": {
+            "value": "@pipeline().parameters.WaitTimes[3]",
+            "type": "Expression"
+          }
+        }
+      },
+      {
+        "name": "ForEach Item in WaitTimes Array",
+        "type": "ForEach",
+        "state": "Inactive",
+        "onInactiveMarkAs": "Succeeded",
+        "dependsOn": [],
+        "typeProperties": {
+          "items": {
+            "value": "@pipeline().parameters.WaitTimes",
+            "type": "Expression"
+          },
+          "activities": [
+            {
+              "name": "Wait n seconds",
+              "type": "Wait",
+              "dependsOn": [],
+              "typeProperties": {
+                "waitTimeInSeconds": {
+                  "value": "@item()",
+                  "type": "Expression"
+                }
+              }
+            }
+          ]
+        }
+      },
+      {
+        "name": "Ex1_3 ForEach Item in WaitTimes",
+        "type": "ForEach",
+        "dependsOn": [],
+        "typeProperties": {
+          "items": {
+            "value": "@pipeline().parameters.WaitTimes",
+            "type": "Expression"
+          },
+          "activities": [
+            {
+              "name": "If Greater than 4",
+              "type": "IfCondition",
+              "dependsOn": [],
+              "typeProperties": {
+                "expression": {
+                  "value": "@greater(item(),4)",
+                  "type": "Expression"
+                },
+                "ifFalseActivities": [],
+                "ifTrueActivities": [
+                  {
+                    "name": "Conditional Wait n second",
+                    "type": "Wait",
+                    "dependsOn": [],
+                    "typeProperties": {
+                      "waitTimeInSeconds": {
+                        "value": "@item()",
+                        "type": "Expression"
+                      }
+                    }
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      },
+      {
+        "name": "Filter items",
+        "type": "Filter",
+        "dependsOn": [],
+        "typeProperties": {
+          "items": {
+            "value": "@pipeline().parameters.WaitTimes",
+            "type": "Expression"
+          },
+          "condition": {
+            "value": "@less(item(),4)",
+            "type": "Expression"
+          }
+        }
+      },
+      {
+        "name": "Set Filtered Array",
+        "type": "SetVariable",
+        "dependsOn": [
+          {
+            "activity": "Filter items",
+            "dependencyConditions": [
+              "Succeeded"
+            ]
+          }
+        ],
+        "policy": {
+          "secureOutput": false,
+          "secureInput": false
+        },
+        "typeProperties": {
+          "variableName": "v_FilteredArray",
+          "value": {
+            "value": "@activity('Filter items').output.value",
+            "type": "Expression"
+          }
+        }
+      },
+      {
+        "name": "ForEach item in FilterArray",
+        "type": "ForEach",
+        "dependsOn": [
+          {
+            "activity": "Set Filtered Array",
+            "dependencyConditions": [
+              "Succeeded"
+            ]
+          }
+        ],
+        "typeProperties": {
+          "items": {
+            "value": "@variables('v_FilteredArray')",
+            "type": "Expression"
+          },
+          "activities": [
+            {
+              "name": "Wait n Filter",
+              "type": "Wait",
+              "dependsOn": [],
+              "typeProperties": {
+                "waitTimeInSeconds": {
+                  "value": "@item()",
+                  "type": "Expression"
+                }
+              }
+            }
+          ]
+        }
+      }
+    ],
+    "parameters": {
+      "WaitTimes": {
+        "type": "array",
+        "defaultValue": [
+          5,
+          1,
+          8,
+          3
+        ]
+      }
+    },
+    "variables": {
+      "v_FiltedArray": {
+        "type": "Array"
+      },
+      "v_FilteredArray": {
+        "type": "Array"
+      }
+    }
+  }
+}

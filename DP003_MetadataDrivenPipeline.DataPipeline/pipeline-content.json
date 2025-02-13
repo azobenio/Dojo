@@ -1,0 +1,129 @@
+{
+  "properties": {
+    "activities": [
+      {
+        "name": "For Each Object in Metadata Array",
+        "type": "ForEach",
+        "dependsOn": [],
+        "typeProperties": {
+          "items": {
+            "value": "@pipeline().parameters.Metadata",
+            "type": "Expression"
+          },
+          "activities": [
+            {
+              "name": "Dynamic Copy CSV from GitHUb to DWH",
+              "type": "Copy",
+              "dependsOn": [],
+              "policy": {
+                "timeout": "0.12:00:00",
+                "retry": 0,
+                "retryIntervalInSeconds": 30,
+                "secureOutput": false,
+                "secureInput": false
+              },
+              "typeProperties": {
+                "source": {
+                  "type": "DelimitedTextSource",
+                  "storeSettings": {
+                    "type": "HttpReadSettings",
+                    "requestMethod": "GET"
+                  },
+                  "formatSettings": {
+                    "type": "DelimitedTextReadSettings"
+                  },
+                  "datasetSettings": {
+                    "annotations": [],
+                    "type": "DelimitedText",
+                    "typeProperties": {
+                      "location": {
+                        "type": "HttpServerLocation",
+                        "relativeUrl": {
+                          "value": "@item().Source",
+                          "type": "Expression"
+                        }
+                      },
+                      "columnDelimiter": ",",
+                      "escapeChar": "\\",
+                      "firstRowAsHeader": true,
+                      "quoteChar": "\""
+                    },
+                    "schema": [],
+                    "externalReferences": {
+                      "connection": "25124b15-477d-43ee-8edc-7d0117cf76b5"
+                    }
+                  }
+                },
+                "sink": {
+                  "type": "DataWarehouseSink",
+                  "allowCopyCommand": true,
+                  "copyCommandSettings": {},
+                  "tableOption": "autoCreate",
+                  "datasetSettings": {
+                    "annotations": [],
+                    "linkedService": {
+                      "name": "DP001_DWH         ",
+                      "properties": {
+                        "annotations": [],
+                        "type": "DataWarehouse",
+                        "typeProperties": {
+                          "endpoint": "bmlm4xgixyretm76q44b2o7som-y3jdgb23r63efk62odmzsc6hse.datawarehouse.fabric.microsoft.com",
+                          "artifactId": "03154f89-5fc4-4b2e-87eb-cbd73d2d796d",
+                          "workspaceId": "0733d2c6-8f5b-42b6-abda-70d9990bc791"
+                        }
+                      }
+                    },
+                    "type": "DataWarehouseTable",
+                    "schema": [],
+                    "typeProperties": {
+                      "schema": {
+                        "value": "@string('dbo')",
+                        "type": "Expression"
+                      },
+                      "table": {
+                        "value": "@item().Destination",
+                        "type": "Expression"
+                      }
+                    }
+                  }
+                },
+                "enableStaging": true,
+                "translator": {
+                  "type": "TabularTranslator",
+                  "typeConversion": true,
+                  "typeConversionSettings": {
+                    "allowDataTruncation": true,
+                    "treatBooleanAsNumber": false
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    ],
+    "parameters": {
+      "Metadata": {
+        "type": "array",
+        "defaultValue": [
+          {
+            "Source": "addresses.csv",
+            "Destination": "B_Addresses"
+          },
+          {
+            "Source": "contacts.csv",
+            "Destination": "B_Contacts"
+          },
+          {
+            "Source": "locations2.csv",
+            "Destination": "B_Locations"
+          },
+          {
+            "Source": "phones.csv",
+            "Destination": "B_Phones"
+          }
+        ]
+      }
+    }
+  }
+}

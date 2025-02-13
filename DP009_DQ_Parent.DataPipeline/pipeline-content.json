@@ -1,0 +1,107 @@
+{
+  "properties": {
+    "activities": [
+      {
+        "type": "Lookup",
+        "typeProperties": {
+          "source": {
+            "type": "DataWarehouseSource",
+            "partitionOption": "None",
+            "queryTimeout": "02:00:00"
+          },
+          "datasetSettings": {
+            "type": "DataWarehouseTable",
+            "typeProperties": {
+              "schema": "dbo",
+              "table": "Configuration"
+            },
+            "schema": [],
+            "linkedService": {
+              "name": "DP009_Metadata",
+              "properties": {
+                "type": "DataWarehouse",
+                "typeProperties": {
+                  "artifactId": "4dffd6f9-69eb-4d5c-a152-56e5d66821fd",
+                  "endpoint": "bmlm4xgixyretm76q44b2o7som-y3jdgb23r63efk62odmzsc6hse.datawarehouse.fabric.microsoft.com",
+                  "workspaceId": "0733d2c6-8f5b-42b6-abda-70d9990bc791"
+                },
+                "annotations": []
+              }
+            },
+            "annotations": []
+          },
+          "firstRowOnly": false
+        },
+        "policy": {
+          "timeout": "0.12:00:00",
+          "retry": 0,
+          "retryIntervalInSeconds": 30,
+          "secureInput": false,
+          "secureOutput": false
+        },
+        "name": "Fet MEtadata from DWH Table",
+        "dependsOn": []
+      },
+      {
+        "type": "ForEach",
+        "typeProperties": {
+          "isSequential": true,
+          "items": {
+            "value": "@activity('Fet MEtadata from DWH Table').output.value",
+            "type": "Expression"
+          },
+          "activities": [
+            {
+              "type": "InvokePipeline",
+              "typeProperties": {
+                "parameters": {
+                  "SourceFileDirectory": {
+                    "value": "@item().SourceFileDirectory",
+                    "type": "Expression"
+                  },
+                  "SourceFileName": {
+                    "value": "@item().SourceFileName",
+                    "type": "Expression"
+                  },
+                  "DestinationTableName": {
+                    "value": "@item().DestinationTableName",
+                    "type": "Expression"
+                  },
+                  "ExpectedColNames": {
+                    "value": "@item().ExpectedColNames",
+                    "type": "Expression"
+                  }
+                },
+                "waitOnCompletion": true,
+                "workspaceId": "00000000-0000-0000-0000-000000000000",
+                "pipelineId": "9d7d7145-84cd-a230-4a97-701fcac0a489",
+                "operationType": "InvokeFabricPipeline"
+              },
+              "externalReferences": {
+                "connection": "ea3f4ecb-8ac0-4426-99a1-cf2f39f309d1"
+              },
+              "policy": {
+                "timeout": "0.12:00:00",
+                "retry": 0,
+                "retryIntervalInSeconds": 30,
+                "secureInput": false,
+                "secureOutput": false
+              },
+              "name": "Call the child DQ Pipeline",
+              "dependsOn": []
+            }
+          ]
+        },
+        "name": "For row in Metada Table",
+        "dependsOn": [
+          {
+            "activity": "Fet MEtadata from DWH Table",
+            "dependencyConditions": [
+              "Succeeded"
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

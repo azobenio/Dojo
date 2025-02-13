@@ -1,0 +1,47 @@
+{
+  "properties": {
+    "activities": [
+      {
+        "name": "ELT1 Trigger Dataflow",
+        "type": "RefreshDataflow",
+        "dependsOn": [],
+        "policy": {
+          "timeout": "0.12:00:00",
+          "retry": 0,
+          "retryIntervalInSeconds": 30,
+          "secureOutput": false,
+          "secureInput": false
+        },
+        "typeProperties": {
+          "dataflowId": "f2695aca-411c-4787-9e8c-77549e74c5a7",
+          "workspaceId": "0733d2c6-8f5b-42b6-abda-70d9990bc791",
+          "notifyOption": "NoNotification"
+        }
+      },
+      {
+        "name": "ETL2 Trigger Dataflow",
+        "type": "RefreshDataflow",
+        "dependsOn": [
+          {
+            "activity": "ELT1 Trigger Dataflow",
+            "dependencyConditions": [
+              "Succeeded"
+            ]
+          }
+        ],
+        "policy": {
+          "timeout": "0.12:00:00",
+          "retry": 0,
+          "retryIntervalInSeconds": 30,
+          "secureOutput": false,
+          "secureInput": false
+        },
+        "typeProperties": {
+          "dataflowId": "2ec95dbf-48e8-49c6-bb3e-b0b38817d547",
+          "workspaceId": "0733d2c6-8f5b-42b6-abda-70d9990bc791",
+          "notifyOption": "NoNotification"
+        }
+      }
+    ]
+  }
+}
